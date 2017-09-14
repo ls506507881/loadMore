@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <style>
+        ul,li {
+            margin: 0; padding: 0
+        }
+        #ct li{
+            list-style: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #load-more{
+            display: block;
+            margin: 10px auto;
+            text-align: center;
+            cursor: pointer;
+        }
+        #load-more img{
+            width: 40px;
+            height: 40px;
+        }
+        .btn{
+            display: inline-block;
+            height: 40px;
+            line-height: 40px;
+            width: 80px;
+            border: 1px solid #E27272;
+            border-radius: 3px;
+            text-align: center;
+            text-decoration: none;
+            color: #E27272;
+        }
+        .btn:hover{
+            background:#E27272;
+            color: #fff;
+            transition: all .5s;
+        }
+    </style>
+    <ul id="ct">
+
+    </ul>
+    <a href="#" class="btn" id="load-more">加载更多</a>
+    <script>
+        var btn = document.querySelector('.btn')
+        var ct = document.querySelector('#ct')
+        var pageIndex = 1;
+        var isDataArrive = true
+        btn.addEventListener('click',function(e){
+            e.preventDefault()
+            if(!isDataArrive){
+                return;
+            }
+            var xhr = new XMLHttpRequest()
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState ===4){
+                    if(xhr.status===200 || xhr.status ===304 ){
+                        var results = JSON.parse(xhr.responseText);
+                        console.log(results)
+                        var fragment=document.createDocumentFragment()
+                        for(var i = 0;i<results.length;i++){
+                            var node = document.createElement('li')
+                            node.innerText=results[i]
+                            fragment.appendChild(node)
+                        }
+                        ct.appendChild(fragment)
+                        pageIndex += 5
+                    }else{
+                        console.log('出错了')
+                    }
+                    isDataArrive = true
+                }
+            }
+            xhr.open('get','loadMore?index='+pageIndex+'&length=5',true)
+            xhr.send()
+            isDataArrive = false
+        })
+
+
+
+
+    </script>
+</body>
+</html>
